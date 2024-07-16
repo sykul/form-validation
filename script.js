@@ -59,14 +59,24 @@ function validatePostcode() {
   return postcodeRegex.test(postcodeField.value);
 }
 
-function validatePassword() {}
+function validatePassword(passwordField) {
+  if (passwordField.value.length < 5) {
+    return 'needs to be between 5 and 20 characters'
+  } else if (passwordField.value.length > 20) {
+    return 'needs to be between 5 and 20 characters'
+  } else if (/\%/.test(passwordField.value)) {
+    return "can't contain '%'"
+  } else {
+    return true;
+  }
+}
 
 submitButton.addEventListener("click", () => {
   console.log(`email: ${validateEmail(emailField)}`);
   console.log(`country: ${validateCountry(emailField)}`);
-  console.log(validatePostcode(countryField));
-  console.log(validatePassword)
-});
+  console.log(`postcode: ${validatePostcode(countryField)}`);
+  console.log(`password: ${validatePassword(passwordField)}`);
+})
 
 countryField.value = "GB";
 submitButton.click();
