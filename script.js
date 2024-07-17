@@ -25,7 +25,8 @@ const countryCodes = postcodeRegexes.map((object) => object.country);
 function validateEmail(emailField) {
 
   if (emailField.value.length === 0) {
-    emailField.setCustomValidity('Please type an email address')
+    emailField.setCustomValidity('Please type an email address');
+    return false;
   }
 
 
