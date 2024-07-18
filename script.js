@@ -23,12 +23,12 @@ const postcodeRegexes = [
 const countryCodes = postcodeRegexes.map((object) => object.country);
 
 function validateEmail(emailField) {
-
-  if (emailField.value.length === 0) {
-    emailField.setCustomValidity('Please type an email address');
+  if (emailField.validity.typeMismatch) {
+    emailField.setCustomValidity("Please type an email address");
     return false;
+  } else {
+    emailField.setCustomValidity("");
   }
-
 
   const parts = emailField.value.split("@");
 
@@ -38,14 +38,14 @@ function validateEmail(emailField) {
   }
 
   if (parts[0].trim().length === 0 || parts[1].trim().length === 0) {
+    emailField.setCustomValidity("");
     return false;
   }
-  if (emailField.value) {
-    emailField.setCustomValidity('');
+  if (emailField.checkValidity()) {
+    emailField.setCustomValidity("");
     return true;
   }
 
-  emailField.setCustomValidity('');
   return false;
 }
 
@@ -60,11 +60,22 @@ function validateCountry(countryField) {
 }
 
 function validatePostcode(postcodeField, countryField, postcodeRegexes) {
+  if (countryField.value.length === 0) {
+    postcodeField.setCustomValidity("select a country first");
+    return false;
+  }
+
   const postcodeRegexObject = postcodeRegexes.filter(
     (item) => item.country === `${countryField.value}`
   );
   const postcodeRegex = postcodeRegexObject[0].regex;
-  return postcodeRegex.test(postcodeField.value);
+
+  if (postcodeRegex.test(postcodeField.value)) {
+    postcodeField.setCustomValidity("");
+    return true;
+  } else {
+    postcodeField.setCustomValidity("invalid postcode");
+  }
 }
 
 function validatePassword(passwordField) {
@@ -87,21 +98,33 @@ function checkPasswordsMatch(passwordField, passwordConfirmationField) {
   }
 }
 
-emailField.addEventListener("change", () => validateEmail(emailField));
+emailField.addEventListener("change", () => {
+  validateEmail(emailField);
+  emailField.reportValidity();
+});
 
-countryField.addEventListener("change", () => validateCountry(countryField));
+countryField.addEventListener("change", () => {
+  validateCountry(countryField);
+  countryField.reportValidity();
+});
 
-postcodeField.addEventListener("change", () =>
-  validatePostcode(postcodeField, countryField, postcodeRegexes)
-);
+postcodeField.addEventListener("change", () => {
+  validatePostcode(postcodeField, countryField, postcodeRegexes);
+  postcodeField.reportValidity();
+});
 
-passwordField.addEventListener("change", () => validatePassword(passwordField));
+passwordField.addEventListener("change", () => {
+  validatePassword(passwordField);
+  passwordField.reportValidity();
+});
 
-passwordConfirmationField.addEventListener("change", () =>
-  checkPasswordsMatch(passwordField, passwordConfirmationField)
-);
+passwordConfirmationField.addEventListener("change", () => {
+  checkPasswordsMatch(passwordField, passwordConfirmationField);
+  passwordConfirmationField.reportValidity();
+});
 
-submitButton.addEventListener("click", () => {
+submitButton.addEventListener("click", (event) => {
+  event.preventDefault();
   console.log(`email: ${validateEmail(emailField)}`);
   console.log(`country: ${validateCountry(countryField)}`);
   console.log(
@@ -120,5 +143,6 @@ submitButton.addEventListener("click", () => {
   );
 });
 
-countryField.value = "GB";
-submitButton.click();
+const email = document.getElementById("mail");
+
+countryField.value = "CN";
