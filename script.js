@@ -79,13 +79,14 @@ function validatePostcode(postcodeField, countryField, postcodeRegexes) {
 }
 
 function validatePassword(passwordField) {
-  if (passwordField.value.length < 5) {
-    return "needs to be between 5 and 20 characters";
-  } else if (passwordField.value.length > 20) {
-    return "needs to be between 5 and 20 characters";
+  if (passwordField.value.length < 5 || passwordField.value.length > 20) {
+    passwordField.setCustomValidity("needs to be between 5 and 20 characters");
+    return false;
   } else if (/\%/.test(passwordField.value)) {
-    return "can't contain '%'";
+    passwordField.setCustomValidity("can't contain '%'");
+    return false;
   } else {
+    passwordField.setCustomValidity("");
     return true;
   }
 }
