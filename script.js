@@ -85,6 +85,9 @@ function validatePassword(passwordField) {
   } else if (/\%/.test(passwordField.value)) {
     passwordField.setCustomValidity("can't contain '%'");
     return false;
+  } else if (passwordField.value !== passwordConfirmationField.value) {
+    passwordField.setCustomValidity("passwords need to match")
+    return false;
   } else {
     passwordField.setCustomValidity("");
     return true;
@@ -93,8 +96,10 @@ function validatePassword(passwordField) {
 
 function checkPasswordsMatch(passwordField, passwordConfirmationField) {
   if (passwordField.value === passwordConfirmationField.value) {
+    passwordConfirmationField.setCustomValidity("")
     return true;
   } else {
+    passwordConfirmationField.setCustomValidity("passwords need to match")
     return false;
   }
 }
